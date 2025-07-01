@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sức Khỏe Của Tôi - iOS Blue Sky</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <style>
+        /* Biến CSS cho màu sắc */
+        :root {
+            --ios-blue: #007AFF;
+            --sky-blue-light: #E0F2F7; /* Màu nền trời xanh nhạt */
+            --sky-blue-medium: #B2D8E3; /* Màu xanh trung bình cho header/nav */
+            --text-dark: #333;
+            --text-light: #fff;
+            --card-background: #ffffff;
+            --border-light: #e0e0e0;
+            --shadow-light: rgba(0, 0, 0, 0.08);
+            --success-green: #28a745;
+            --danger-red: #dc3545;
+        }
+
+        /* Reset CSS cơ bản và Font cho iOS */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--sky-blue-light);
+            color: var(--text-dark);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden; /* Ngăn chặn scroll ngang */
+        }
+
+        /* Header (Thanh điều hướng trên cùng) */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: var(--sky-blue-medium); /* Màu xanh nhạt hơn cho header */
+            color: var(--text-light);
+            box-shadow: 0 2px 4px var(--shadow-light);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-svg {
+            width: 30px;
+            height: 30px;
+            fill: var(--text-light);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .menu-icon {
+            font-size: 24px;
+            cursor: pointer;
+            display: none; /* Ẩn trên desktop, hiển thị trên mobile */
+        }
+
+        /* Navigation (Menu điều hướng chính) */
+        nav {
+            background-color: var(--ios-blue);
+            padding: 10px 0;
+            box-shadow: 0 2px 4px var(--shadow-light);
+            display: flex;
+            justify-content: center; /* Canh giữa các mục nav */
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap; /* Cho phép xuống dòng trên màn hình nhỏ */
+            justify-content: center;
+        }
+
+        nav ul li a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        nav ul li a:hover,
+        nav ul li a.active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Nội dung chính */
+        main {
+            padding: 20px;
+            max-width: 800px;
+            margin: 20px auto;
+        }
+
+        /* Các thẻ nội dung (Cards) */
+        .card {
+            background-color: var(--card-background);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px var(--shadow-light);
+        }
+
+        .card h2 {
+            color: var(--ios-blue);
+            margin-top: 0;
+            font-size: 22px;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* Form styling */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .form-group input[type="number"],
+        .form-group select { /* Áp dụng cho cả input và select */
+            width: calc(100% - 20px);
+            padding: 12px 10px;
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            font-size: 16px;
+            -webkit-appearance: none; /* Remove default iOS input styles */
+            appearance: none;
+            box-sizing: border-box; /* Đảm bảo padding không làm tăng width */
+        }
+        .form-group input[type="number"]:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--ios-blue);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
+        }
+
+        button {
+            background-color: var(--ios-blue);
+            color: var(--text-light);
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+
+        .result-box {
+            background-color: var(--sky-blue-light);
+            border: 1px solid var(--ios-blue);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .result-box span {
+            color: var(--ios-blue);
+        }
+
+        /* Placeholder styles for other sections */
+        .placeholder-content {
+            min-height: 100px;
+            display: flex;
+            flex-direction: column; /* Cho phép các p xuống dòng */
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-style: italic;
+            border: 1px dashed var(--border-light);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Styles for Weight Tracker */
+        .history-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+            max-height: 250px; /* Giới hạn chiều cao để có scroll */
+            overflow-y: auto; /* Cho phép cuộn nếu danh sách dài */
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+        }
+
+        .history-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 16px;
+            color: var(--text-dark);
+        }
+
+        .history-list li:last-child {
+            border-bottom: none;
+        }
+
+        .history-list li .date {
+            font-weight: 500;
+            color: var(--ios-blue);
+        }
+
+        .history-list li .weight-value {
+            font-weight: 600;
+        }
+
+        /* Styles for Water Reminder */
+        .water-status-box {
+            background-color: var(--sky-blue-light);
+            border: 1px solid var(--ios-blue);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .water-status-box p {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .water-status-box span {
+            color: var(--ios-blue);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            background-color: var(--border-light);
+            border-radius: 5px;
+            height: 15px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%; /* Sẽ được điều chỉnh bằng JS */
+            background-color: var(--ios-blue);
+            border-radius: 5px;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .water-actions {
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .water-actions button {
+            flex-grow: 1; /* Các nút sẽ chia đều không gian */
+            width: auto; /* Override 100% width from general button style */
+        }
+
+        /* Styles for Meal Plan */
+        .meal-plan-nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap; /* Cho phép xuống dòng trên mobile */
+        }
+        .meal-plan-nav button {
+            background-color: var(--sky-blue-medium);
+            color: var(--text-light);
+            border: none;
+            border-radius: 8px;
+            padding: 8px 15px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: auto; /* override 100% width */
+        }
+        .meal-plan-nav button:hover,
+        .meal-plan-nav button.active {
+            background-color: var(--ios-blue);
+        }
+
+        .daily-meal {
+            margin-bottom: 20px;
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            padding: 15px;
+            background-color: var(--card-background);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        /* Ẩn tất cả các daily-meal ban đầu, chỉ hiển thị cái có class show-meal */
+        #monthlyMealPlanContainer .daily-meal {
+            display: none;
+        }
+        #monthlyMealPlanContainer .daily-meal.show-meal {
+            display: block;
+        }
+
+
+        .daily-meal h3 {
+            color: var(--ios-blue);
+            margin-top: 0;
+            margin-bottom: 15px;
+            border-bottom: 1px dashed var(--border-light);
+            padding-bottom: 10px;
+        }
+        .daily-meal ul {
+            list-style: none;
+            padding: 0;
+        }
+        .daily-meal ul li {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center; /* Canh giữa checkbox và text */
+            font-size: 16px;
+        }
+        .daily-meal ul li strong {
+            min-width: 100px; /* Cố định độ rộng cho tên bữa ăn */
+            color: var(--text-dark);
+        }
+        .daily-meal ul li input[type="checkbox"] {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+            /* Tùy chỉnh checkbox cơ bản */
+            -webkit-appearance: none;
+            appearance: none;
+            background-color: #fff;
+            border: 2px solid var(--ios-blue);
+            border-radius: 5px;
+            cursor: pointer;
+            position: relative;
+            flex-shrink: 0; /* Ngăn không cho checkbox bị co lại */
+        }
+        .daily-meal ul li input[type="checkbox"]:checked {
+            background-color: var(--ios-blue);
+            border-color: var(--ios-blue);
+        }
+        .daily-meal ul li input[type="checkbox"]:checked::after {
+            content: '\2713'; /* Dấu tick */
+            display: block;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--text-light);
+            font-size: 14px;
+        }
+        /* Style cho checkbox bị disabled (nếu bạn muốn chúng không bao giờ disabled) */
+        /* Tôi sẽ bỏ phần này nếu bạn chọn tùy chọn B */
+        /*
+        .daily-meal ul li input[type="checkbox"]:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background-color: #e9ecef;
+        }
+        */
+
+        /* Meal History Styles */
+        .meal-history-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1:px solid var(--border-light);
+            border-radius: 10px;
+        }
+        .meal-history-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 16px;
+            color: var(--text-dark);
+        }
+        .meal-history-list li:last-child {
+            border-bottom: none;
+        }
+        .meal-history-list li .date {
+            font-weight: 500;
+            color: var(--ios-blue);
+        }
+        .meal-history-list li .status {
+            font-weight: 600;
+        }
+        .meal-history-list li .status.completed {
+            color: var(--success-green);
+        }
+        .meal-history-list li .status.incomplete {
+            color: var(--danger-red);
+        }
+
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            header {
+                padding: 10px 15px;
+            }
+
+            .header-left {
+                flex-grow: 1;
+            }
+
+            header h1 {
+                font-size: 18px;
+                text-align: center;
+                flex-grow: 1;
+            }
+
+            .menu-icon {
+                display: block;
+            }
+
+            nav {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 60px;
+                left: 0;
+                width: 100%;
+                background-color: var(--ios-blue);
+                box-shadow: 0 4px 8px var(--shadow-light);
+                z-index: 999;
+                padding: 0;
+            }
+
+            nav.open {
+                display: flex;
+            }
+
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+                padding: 10px 0;
+            }
+
+            nav ul li {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 5px;
+            }
+
+            nav ul li a {
+                display: block;
+                padding: 12px 0;
+                border-radius: 0;
+            }
+
+            main {
+                padding: 15px;
+            }
+
+            .card {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .card h2 {
+                font-size: 20px;
+            }
+            
+            button {
+                padding: 15px 20px;
+            }
+            .water-actions {
+                flex-direction: column; /* Xếp chồng các nút trên mobile */
+            }
+            .meal-plan-nav button {
+                flex-basis: 48%; /* 2 nút mỗi hàng trên mobile */
+                margin-bottom: 5px;
+            }
+            .meal-plan-nav {
+                justify-content: space-between;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <svg class="logo-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" stroke="white" stroke-width="2" fill="none"/>
+                <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <h1>Sức Khỏe Của Tôi</h1>
+        </div>
+        <div class="menu-icon" id="menuIcon">
+            <i class="fas fa-bars"></i>
+        </div>
+    </header>
+
+    <nav id="mainNav">
+        <ul>
+            <li><a href="#meal-plan" class="active">Kế hoạch ăn uống</a></li>
+            <li><a href="#calculator">Tính BMI/TDEE</a></li>
+            <li><a href="#weight-tracker">Theo dõi cân nặng</a></li>
+            <li><a href="#water-reminder">Nhắc nhở uống nước</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section id="meal-plan" class="card">
+            <h2>Kế hoạch ăn uống theo tháng</h2>
+            <div class="meal-plan-nav">
+                <button class="active" data-day-button="0" onclick="showDayMeal(0)">Ngày 1</button>
+                <button data-day-button="1" onclick="showDayMeal(1)">Ngày 2</button>
+                <button data-day-button="2" onclick="showDayMeal(2)">Ngày 3</button>
+                <button data-day-button="3" onclick="showDayMeal(3)">Ngày 4</button>
+                <button data-day-button="4" onclick="showDayMeal(4)">Ngày 5</button>
+                <button data-day-button="5" onclick="showDayMeal(5)">Ngày 6</button>
+                <button data-day-button="6" onclick="showDayMeal(6)">Ngày 7</button>
+            </div>
+            
+            <div id="monthlyMealPlanContainer">
+                </div>
+            <p style="text-align: center; font-style: italic; color: #666; margin-top: 20px;">
+                Thực đơn được lặp lại theo chu kỳ 7 ngày cho cả tháng.
+            </p>
+            <button id="completeDayButton" onclick="completeCurrentDayMeals()">Hoàn thành ngày hôm nay</button>
+        </section>
+
+        <section id="meal-plan-history" class="card">
+            <h2>Lịch sử Kế hoạch ăn uống</h2>
+            <ul id="mealHistoryList" class="meal-history-list">
+                <li style="justify-content: center; font-style: italic; color: #666;">Chưa có lịch sử nào.</li>
+            </ul>
+        </section>
+
+
+        <section id="calculator" class="card">
+            <h2>Tính BMI / TDEE / Calo mục tiêu</h2>
+            <div class="form-group">
+                <label for="height">Chiều cao (cm):</label>
+                <input type="number" id="height" placeholder="Ví dụ: 175" min="50" max="250" step="0.1">
+            </div>
+            <div class="form-group">
+                <label for="weight">Cân nặng (kg):</label>
+                <input type="number" id="weight" placeholder="Ví dụ: 70" min="20" max="300" step="0.1">
+            </div>
+            <div class="form-group">
+                <label for="age">Tuổi:</label>
+                <input type="number" id="age" placeholder="Ví dụ: 30" min="1" max="120">
+            </div>
+            <div class="form-group">
+                <label for="gender">Giới tính:</label>
+                <select id="gender" style="width: calc(100% - 20px); padding: 12px 10px; border: 1px solid var(--border-light); border-radius: 10px; font-size: 16px;">
+                    <option value="male">Nam</option>
+                    <option value="female">Nữ</option>
+                </select>
+            </div>
+             <div class="form-group">
+                <label for="activity">Mức độ hoạt động:</label>
+                <select id="activity" style="width: calc(100% - 20px); padding: 12px 10px; border: 1px solid var(--border-light); border-radius: 10px; font-size: 16px;">
+                    <option value="1.2">Ít vận động (ít hoặc không tập thể dục)</option>
+                    <option value="1.375">Vận động nhẹ (1-3 ngày/tuần)</option>
+                    <option value="1.55">Vận động vừa (3-5 ngày/tuần)</option>
+                    <option value="1.725">Vận động nặng (6-7 ngày/tuần)</option>
+                    <option value="1.9">Vận động rất nặng (2 lần/ngày, công việc nặng)</option>
+                </select>
+            </div>
+            <button onclick="calculateMetrics()">Tính toán</button>
+            <div id="results" class="result-box" style="display: none;">
+                <p><strong>BMI:</strong> <span id="bmiResult"></span></p>
+                <p><strong>Phân loại BMI:</strong> <span id="bmiCategory"></span></p>
+                <p><strong>TDEE:</strong> <span id="tdeeResult"></span> calo/ngày</p>
+                <p><strong>Calo mục tiêu (Duy trì):</strong> <span id="targetCaloriesMaintain"></span> calo/ngày</p>
+                <p><strong>Calo mục tiêu (Giảm cân):</strong> <span id="targetCaloriesLose"></span> calo/ngày</p>
+                <p><strong>Calo mục tiêu (Tăng cân):</strong> <span id="targetCaloriesGain"></span> calo/ngày</p>
+            </div>
+        </section>
+
+        <section id="weight-tracker" class="card">
+            <h2>Theo dõi cân nặng</h2>
+            <div class="form-group">
+                <label for="currentWeight">Cân nặng hiện tại (kg):</label>
+                <input type="number" id="currentWeight" placeholder="Nhập cân nặng của bạn" min="20" max="300" step="0.1">
+            </div>
+            <button onclick="addWeightEntry()">Thêm cân nặng</button>
+
+            <h3>Lịch sử cân nặng:</h3>
+            <ul id="weightHistoryList" class="history-list">
+                </ul>
+            <div class="placeholder-content" id="weightChartPlaceholder" style="display: none;">
+                <p>Biểu đồ theo dõi cân nặng sẽ hiển thị tại đây.</p>
+                <p>Bạn có thể sử dụng thư viện như Chart.js hoặc D3.js để vẽ biểu đồ.</p>
+            </div>
+        </section>
+
+        <section id="water-reminder" class="card">
+            <h2>Nhắc nhở uống nước thông minh</h2>
+            <div class="form-group">
+                <label for="dailyWaterGoal">Mục tiêu nước hàng ngày (ml):</label>
+                <input type="number" id="dailyWaterGoal" placeholder="Ví dụ: 2000" min="500" max="10000" step="100">
+                <button onclick="setWaterGoal()">Đặt mục tiêu</button>
+            </div>
+
+            <div class="water-status-box">
+                <p>Đã uống: <span id="waterConsumed">0</span> ml / <span id="waterGoal">0</span> ml</p>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="waterProgressBar"></div>
+                </div>
+            </div>
+            
+            <div class="water-actions">
+                <button onclick="addWater(200)">+200ml</button>
+                <button onclick="addWater(500)">+500ml</button>
+                <button onclick="resetWater()">Đặt lại trong ngày</button>
+            </div>
+
+            <h3>Nhắc nhở tự động:</h3>
+            <div class="form-group">
+                <label for="reminderInterval">Nhắc nhở mỗi (phút):</label>
+                <input type="number" id="reminderInterval" placeholder="Ví dụ: 60" min="15" max="240" step="5">
+                <button onclick="toggleWaterReminder()">Bật/Tắt nhắc nhở</button>
+                <p id="reminderStatus">Trạng thái: Đã tắt</p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // --- Dữ liệu thực đơn hàng ngày (Chu kỳ 7 ngày) ---
+        const monthlyMealPlan = [
+            {
+                day: "Ngày 1",
+                meals: {
+                    "Buổi sáng": "2 trứng + cơm + chuối + sữa",
+                    "Bữa phụ sáng": "Sinh tố + 15g hạnh nhân",
+                    "Bữa trưa": "Cơm + 200g cá (ví dụ: cá hồi/cá basa) + rau luộc + canh rau",
+                    "Bữa phụ chiều": "Bánh mì phô mai + sữa chua",
+                    "Bữa tối": "Cơm + đậu phụ sốt cà chua + rau xào + canh bí",
+                    "Trước ngủ": "Sữa + 15g óc chó"
+                }
+            },
+            {
+                day: "Ngày 2",
+                meals: {
+                    "Buổi sáng": "2 trứng + cơm + chuối + sữa",
+                    "Bữa phụ sáng": "Sinh tố + 15g hạnh nhân",
+                    "Bữa trưa": "Cơm + 200g thịt gà (ví dụ: ức gà luộc/nướng) + rau sống + canh bí",
+                    "Bữa phụ chiều": "Bánh mì phô mai + sữa chua",
+                    "Bữa tối": "Cơm + cá (ví dụ: cá thu chiên) + rau luộc + canh chua",
+                    "Trước ngủ": "Sữa + 15g óc chó"
+                }
+            },
+            {
+                day: "Ngày 3",
+                meals: {
+                    "Buổi sáng": "2 trứng + cơm + chuối + sữa",
+                    "Bữa phụ sáng": "Sinh tố + 15g hạnh nhân",
+                    "Bữa trưa": "Cơm + 200g thịt bò (ví dụ: thịt bò xào rau củ) + rau luộc + canh rau",
+                    "Bữa phụ chiều": "Bánh mì phô mai + sữa chua",
+                    "Bữa tối": "Cơm + đậu phụ rim thịt băm + rau cải luộc + canh rau",
+                    "Trước ngủ": "Sữa + 15g óc chó"
+                }
+            },
+            {
+                day: "Ngày 4",
+                meals: {
+                    "Buổi sáng": "2 trứng + cơm + chuối + sữa",
+                    "Bữa phụ sáng": "Sinh tố + 15g hạnh nhân",
+                    "Bữa trưa": "Cơm + 200g cá (ví dụ: cá diêu hồng hấp) + rau xào + canh cà chua",
+                    "Bữa phụ chiều": "Bánh mì phô mai + sữa chua",
+                    "Bữa tối": "Cơm + thịt lợn nạc rang cháy cạnh + rau luộc + canh bí",
+                    "Trước ngủ": "Sữa + 15g óc chó"
+                }
+            },
+            {
+                day: "Ngày 5",
+                meals: {
+                    "Buổi sáng": "2 trứng + cơm + chuối + sữa",
+                    "Bữa phụ sáng": "Sinh tố + 15g hạnh nhân",
+                    "Bữa trưa": "Cơm + 200g thịt gà (ví dụ: gà kho gừng) + rau sống + canh rau",
+                    "Bữa phụ chiều": "Bánh mì phô mai + sữa chua",
+                    "Bữa tối": "Cơm + cá (ví dụ: cá sốt cà chua) + rau luộc + canh chua",
+                    "Trước ngủ": "Sữa + 15g óc chó"
+                }
+            },
+            {
+                day: "Ngày 6",
+                meals: {
+                    "Buổi sáng": "2 trứng + cơm + chuối + sữa",
+                    "Bữa phụ sáng": "Sinh tố + 15g hạnh nhân",
+                    "Bữa trưa": "Cơm + 200g đậu hũ dồn thịt + rau luộc + canh rau",
+                    "Bữa phụ chiều": "Bánh mì phô mai + sữa chua",
+                    "Bữa tối": "Cơm + thịt bò xào súp lơ + rau luộc + canh bí",
+                    "Trước ngủ": "Sữa + 15g óc chó"
+                }
+            },
+            {
+                day: "Ngày 7",
+                meals: {
+                    "Buổi sáng": "2 trứng + cơm + chuối + sữa",
+                    "Bữa phụ sáng": "Sinh tố + 15g hạnh nhân",
+                    "Bữa trưa": "Cơm + 200g cá (ví dụ: cá kho tộ) + rau luộc + canh rau",
+                    "Bữa phụ chiều": "Bánh mì phô mai + sữa chua",
+                    "Bữa tối": "Cơm + trứng đúc thịt + rau luộc + canh rau",
+                    "Trước ngủ": "Sữa + 15g óc chó"
+                }
+            }
+        ];
+
+        let currentActiveDayIndex = 0; // Để theo dõi ngày hiện tại đang hiển thị
+        // Lưu trạng thái hoàn thành bữa ăn theo CẶP NGÀY THỰC TẾ và NGÀY TRONG CHU KỲ (dayIndex)
+        let mealCompletionStates = JSON.parse(localStorage.getItem('mealCompletionStates')) || {};
+        let mealHistory = JSON.parse(localStorage.getItem('mealHistory')) || [];
+
+        // --- Hàm tiện ích để định dạng ngày ---
+        function getFormattedDate(date) {
+            const d = date.getDate().toString().padStart(2, '0');
+            const m = (date.getMonth() + 1).toString().padStart(2, '0');
+            const y = date.getFullYear();
+            return `${d}/${m}/${y}`;
+        }
+
+        // --- Chức năng hiển thị thực đơn theo ngày ---
+        function showDayMeal(dayIndex) {
+            const container = document.getElementById('monthlyMealPlanContainer');
+            container.innerHTML = ''; // Xóa nội dung cũ
+            
+            const mealPlan = monthlyMealPlan[dayIndex];
+            currentActiveDayIndex = dayIndex; // Cập nhật ngày đang được xem
+
+            const today = new Date(); // Lấy ngày hiện tại
+            const todayKey = getFormattedDate(today); // Định dạng ngày hiện tại thành chuỗi "dd/mm/yyyy"
+
+            // Lấy trạng thái đã lưu cho ngày THỰC TẾ hôm nay và dayIndex đang hiển thị
+            const savedStatesForTodayAndDayIndex = mealCompletionStates[todayKey] && mealCompletionStates[todayKey][dayIndex] ? mealCompletionStates[todayKey][dayIndex] : {};
+            
+            // Kiểm tra xem ngày hiện tại (dayIndex) đã được chốt trong lịch sử cho ngày THỰC TẾ hôm nay chưa
+            const isDayCompletedInHistory = mealHistory.some(entry => entry.date === todayKey && entry.dayIndex === dayIndex);
+
+            let htmlContent = `<div class="daily-meal show-meal" data-day-index="${dayIndex}"><h3>${mealPlan.day}</h3><ul>`;
+            
+            let mealCounter = 0;
+            for (const mealType in mealPlan.meals) {
+                const mealId = `meal-${todayKey}-${dayIndex}-${mealCounter++}`; // ID duy nhất cho mỗi checkbox dựa vào ngày thực + chỉ số ngày trong tuần
+                const isChecked = savedStatesForTodayAndDayIndex[mealId] ? 'checked' : '';
+                // **ĐÃ BỎ disabled cho checkbox con để chúng luôn chỉnh sửa được, ngay cả khi ngày đã "hoàn thành"**
+                // Nếu bạn muốn checkbox bị disabled sau khi hoàn thành, hãy đổi lại dòng này:
+                // const isDisabledCheckbox = isDayCompletedInHistory ? 'disabled' : '';
+                // htmlContent += `<input type="checkbox" id="${mealId}" ${isChecked} ${isDisabledCheckbox} ...`
+                
+                htmlContent += `
+                    <li>
+                        <input type="checkbox" id="${mealId}" ${isChecked} 
+                               onchange="saveAndNotifyMealCompletion('${todayKey}', ${dayIndex}, '${mealId}')">
+                        <label for="${mealId}"><strong>${mealType}:</strong> ${mealPlan.meals[mealType]}</label>
+                    </li>
+                `;
+            }
+            htmlContent += `</ul></div>`;
+            container.innerHTML = htmlContent;
+
+            // Cập nhật trạng thái active cho nút điều hướng ngày
+            document.querySelectorAll('.meal-plan-nav button').forEach((btn, index) => {
+                if (index === dayIndex) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Nút "Hoàn thành ngày hôm nay" luôn khả dụng và có màu sắc ban đầu.
+            const completeButton = document.getElementById('completeDayButton');
+            completeButton.disabled = false; // Luôn bật
+            completeButton.textContent = 'Hoàn thành ngày hôm nay';
+            completeButton.style.backgroundColor = 'var(--ios-blue)'; // Luôn màu xanh ban đầu
+        }
+
+        // --- Lưu trạng thái hoàn thành bữa ăn (bỏ thông báo) ---
+        function saveAndNotifyMealCompletion(dateKey, dayIndex, mealId) {
+            // dateKey: là ngày thực tế (vd: 30/06/2025)
+            // dayIndex: là chỉ số ngày trong chu kỳ 7 ngày (vd: 0 cho Ngày 1)
+
+            if (!mealCompletionStates[dateKey]) {
+                mealCompletionStates[dateKey] = {};
+            }
+            if (!mealCompletionStates[dateKey][dayIndex]) {
+                mealCompletionStates[dateKey][dayIndex] = {};
+            }
+            const checkbox = document.getElementById(mealId);
+            mealCompletionStates[dateKey][dayIndex][mealId] = checkbox.checked;
+            localStorage.setItem('mealCompletionStates', JSON.stringify(mealCompletionStates));
+
+            // Đã bỏ thông báo alert ở đây theo yêu cầu
+        }
+
+        // --- Hàm xử lý khi nhấn nút "Hoàn thành ngày hôm nay" ---
+        function completeCurrentDayMeals() {
+            const today = new Date();
+            const todayKey = getFormattedDate(today);
+            const dayIndex = currentActiveDayIndex; // Lấy dayIndex của ngày đang hiển thị
+
+            // Kiểm tra xem ngày đang hiển thị có phải là ngày thực tế của hôm nay không
+            const realTodayDayOfWeek = (today.getDay() === 0) ? 6 : (today.getDay() - 1); // Điều chỉnh Chủ Nhật
+            if (dayIndex !== realTodayDayOfWeek) {
+                alert('Bạn chỉ có thể hoàn thành kế hoạch cho ngày hiện tại trong thực tế.');
+                return;
+            }
+
+            const currentDayState = mealCompletionStates[todayKey] && mealCompletionStates[todayKey][dayIndex] ? mealCompletionStates[todayKey][dayIndex] : {};
+            const totalMeals = Object.keys(monthlyMealPlan[dayIndex].meals).length;
+            let completedMeals = 0;
+            // Lấy trực tiếp từ các checkbox đang hiển thị
+            const checkboxesInCurrentDay = document.querySelectorAll(`#monthlyMealPlanContainer input[type="checkbox"]`);
+            checkboxesInCurrentDay.forEach(cb => {
+                if (cb.checked) {
+                    completedMeals++;
+                }
+            });
+
+
+            const isCompleted = completedMeals >= 4; // Điều kiện 4/6 bữa
+
+            // Kiểm tra nếu ngày này đã có trong lịch sử thì không thêm nữa
+            const alreadyInHistory = mealHistory.some(entry => entry.date === todayKey && entry.dayIndex === dayIndex);
+
+            if (!alreadyInHistory) {
+                mealHistory.push({
+                    date: todayKey,
+                    dayIndex: dayIndex,
+                    completed: isCompleted,
+                    completedMeals: completedMeals,
+                    totalMeals: totalMeals,
+                    timestamp: new Date().toISOString() // Lưu thời gian hoàn thành
+                });
+                localStorage.setItem('mealHistory', JSON.stringify(mealHistory));
+                renderMealHistory(); // Cập nhật lại lịch sử
+
+                if (isCompleted) {
+                    alert(`Tuyệt vời! Bạn đã hoàn thành mục tiêu ăn uống của ${monthlyMealPlan[dayIndex].day} hôm nay với ${completedMeals}/${totalMeals} bữa!`);
+                } else {
+                    alert(`Bạn đã hoàn thành ${completedMeals}/${totalMeals} bữa ăn của ${monthlyMealPlan[dayIndex].day} hôm nay. Cố gắng hơn nhé!`);
+                }
+
+                // **ĐÃ BỎ disabled cho checkbox con ở đây sau khi hoàn thành**
+                // Nếu bạn muốn checkbox bị disabled sau khi hoàn thành, hãy đổi lại dòng này:
+                // checkboxesInCurrentDay.forEach(cb => cb.disabled = true);
+                
+                // Nút "Hoàn thành ngày hôm nay" không bị disabled nữa, nhưng cảnh báo nếu nhấn lại
+            } else {
+                alert('Ngày này đã được hoàn thành và lưu vào lịch sử rồi.');
+            }
+            
+            // Tự động nhảy sang ngày tiếp theo (nếu có)
+            const nextDayIndex = (dayIndex + 1) % monthlyMealPlan.length;
+            showDayMeal(nextDayIndex); // Hiển thị ngày tiếp theo
+        }
+
+        // --- Lịch sử kế hoạch ăn uống ---
+        function renderMealHistory() {
+            const list = document.getElementById('mealHistoryList');
+            list.innerHTML = ''; // Xóa danh sách cũ
+
+            if (mealHistory.length === 0) {
+                list.innerHTML = '<li style="justify-content: center; font-style: italic; color: #666;">Chưa có lịch sử nào.</li>';
+            } else {
+                // Sắp xếp lịch sử theo ngày giảm dần
+                const sortedHistory = [...mealHistory].sort((a, b) => {
+                    // Chuyển đổi ngày và thời gian thành đối tượng Date để so sánh
+                    const dateA = new Date(a.date.split('/').reverse().join('-') + 'T' + a.timestamp.substring(11,19));
+                    const dateB = new Date(b.date.split('/').reverse().join('-') + 'T' + b.timestamp.substring(11,19));
+                    return dateB - dateA;
+                });
+                sortedHistory.forEach(entry => {
+                    const listItem = document.createElement('li');
+                    const statusClass = entry.completed ? 'completed' : 'incomplete';
+                    const statusText = entry.completed ? 'Hoàn thành' : 'Chưa hoàn thành';
+                    listItem.innerHTML = `
+                        <span class="date">${entry.date} (${monthlyMealPlan[entry.dayIndex].day})</span>
+                        <span class="status ${statusClass}">${statusText} (${entry.completedMeals}/${Object.keys(monthlyMealPlan[entry.dayIndex].meals).length})</span>
+                    `;
+                    list.appendChild(listItem);
+                });
+            }
+        }
+
+        // --- Xóa dữ liệu lịch sử và trạng thái bữa ăn cũ hơn 1 tháng ---
+        function cleanOldMealData() {
+            const today = new Date();
+            const oneMonthAgo = new Date();
+            oneMonthAgo.setMonth(today.getMonth() - 1); // Xóa dữ liệu cũ hơn 1 tháng
+
+            // Lọc ra các trạng thái hoàn thành bữa ăn
+            const newMealCompletionStates = {};
+            for (const dateKey in mealCompletionStates) {
+                const [d, m, y] = dateKey.split('/').map(Number);
+                const date = new Date(y, m - 1, d); // Chú ý: tháng trong Date là 0-11
+                if (date >= oneMonthAgo) {
+                    newMealCompletionStates[dateKey] = mealCompletionStates[dateKey];
+                }
+            }
+            mealCompletionStates = newMealCompletionStates;
+            localStorage.setItem('mealCompletionStates', JSON.stringify(mealCompletionStates));
+
+            // Lọc ra lịch sử bữa ăn
+            mealHistory = mealHistory.filter(entry => {
+                const [d, m, y] = entry.date.split('/').map(Number);
+                const entryDate = new Date(y, m - 1, d);
+                return entryDate >= oneMonthAgo;
+            });
+            localStorage.setItem('mealHistory', JSON.stringify(mealHistory));
+        }
+
+        // --- Chức năng tính BMI/TDEE/Calo mục tiêu ---
+        function calculateMetrics() {
+            const heightCm = parseFloat(document.getElementById('height').value);
+            const weightKg = parseFloat(document.getElementById('weight').value);
+            const age = parseInt(document.getElementById('age').value);
+            const gender = document.getElementById('gender').value;
+            const activityLevel = parseFloat(document.getElementById('activity').value);
+
+            if (isNaN(heightCm) || isNaN(weightKg) || isNaN(age) || heightCm <= 0 || weightKg <= 0 || age <= 0) {
+                alert('Vui lòng nhập đầy đủ và chính xác các thông tin: Chiều cao, Cân nặng, Tuổi.');
+                return;
+            }
+
+            // Tính BMI
+            const heightM = heightCm / 100;
+            const bmi = weightKg / (heightM * heightM);
+            document.getElementById('bmiResult').textContent = bmi.toFixed(2);
+
+            let bmiCategory = '';
+            if (bmi < 18.5) {
+                bmiCategory = 'Thiếu cân';
+            } else if (bmi >= 18.5 && bmi < 24.9) {
+                bmiCategory = 'Cân nặng bình thường';
+            } else if (bmi >= 25 && bmi < 29.9) {
+                bmiCategory = 'Thừa cân';
+            } else {
+                bmiCategory = 'Béo phì';
+            }
+            document.getElementById('bmiCategory').textContent = bmiCategory;
+
+            // Tính BMR (Harris-Benedict Equation cải tiến)
+            let bmr;
+            if (gender === 'male') {
+                bmr = (10 * weightKg) + (6.25 * heightCm) - (5 * age) + 5;
+            } else { // female
+                bmr = (10 * weightKg) + (6.25 * heightCm) - (5 * age) - 161;
+            }
+
+            // Tính TDEE
+            const tdee = bmr * activityLevel;
+            document.getElementById('tdeeResult').textContent = tdee.toFixed(0);
+
+            // Calo mục tiêu
+            const targetMaintain = tdee.toFixed(0);
+            const targetLose = (tdee - 500).toFixed(0); // Giảm 500 calo để giảm khoảng 0.5kg/tuần
+            const targetGain = (tdee + 500).toFixed(0); // Tăng 500 calo để tăng khoảng 0.5kg/tuần
+
+            document.getElementById('targetCaloriesMaintain').textContent = targetMaintain;
+            document.getElementById('targetCaloriesLose').textContent = targetLose;
+            document.getElementById('targetCaloriesGain').textContent = targetGain;
+
+            document.getElementById('results').style.display = 'block'; // Hiển thị kết quả
+        }
+
+
+        // --- Tính năng Theo dõi cân nặng ---
+        let weightHistory = JSON.parse(localStorage.getItem('weightHistory')) || [];
+
+        function saveWeightHistory() {
+            localStorage.setItem('weightHistory', JSON.stringify(weightHistory));
+        }
+
+        function renderWeightHistory() {
+            const list = document.getElementById('weightHistoryList');
+            list.innerHTML = ''; // Xóa danh sách cũ
+            if (weightHistory.length === 0) {
+                list.innerHTML = '<li style="justify-content: center; font-style: italic; color: #666;">Chưa có dữ liệu cân nặng nào.</li>';
+                document.getElementById('weightChartPlaceholder').style.display = 'block'; // Hiển thị placeholder nếu không có data
+            } else {
+                // Sắp xếp lại theo ngày giảm dần để cái mới nhất lên đầu
+                const sortedHistory = [...weightHistory].sort((a, b) => new Date(b.date.split('/').reverse().join('-')) - new Date(a.date.split('/').reverse().join('-')));
+                
+                sortedHistory.forEach((entry, index) => {
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `
+                        <span class="date">${entry.date}</span>
+                        <span class="weight-value">${entry.weight} kg</span>
+                        <button onclick="removeWeightEntry('${entry.date}', ${entry.weight})" style="background-color: #ff3b30; padding: 5px 10px; font-size: 14px; border-radius: 5px; width: auto; margin-top: 0;">Xóa</button>
+                    `;
+                    list.appendChild(listItem); // Thêm vào cuối danh sách (sau khi đã sắp xếp mảng)
+                });
+                document.getElementById('weightChartPlaceholder').style.display = 'none'; // Ẩn placeholder nếu có data
+                // TODO: Cập nhật biểu đồ ở đây nếu có thư viện Chart.js
+            }
+        }
+
+        function addWeightEntry() {
+            const currentWeightInput = document.getElementById('currentWeight');
+            const weight = parseFloat(currentWeightInput.value);
+
+            if (isNaN(weight) || weight <= 0) {
+                alert('Vui lòng nhập cân nặng hợp lệ.');
+                return;
+            }
+
+            const today = new Date();
+            const dateString = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()}`;
+
+            // Kiểm tra xem đã có cân nặng cho ngày hôm nay chưa
+            const existingEntryIndex = weightHistory.findIndex(entry => entry.date === dateString);
+
+            if (existingEntryIndex !== -1) {
+                // Cập nhật nếu đã có
+                weightHistory[existingEntryIndex].weight = weight;
+                alert('Cân nặng cho ngày hôm nay đã được cập nhật!');
+            } else {
+                // Thêm mới nếu chưa có
+                weightHistory.push({ date: dateString, weight: weight });
+            }
+            
+            saveWeightHistory();
+            renderWeightHistory();
+            currentWeightInput.value = ''; // Xóa input sau khi thêm
+        }
+
+        function removeWeightEntry(dateToRemove, weightToRemove) {
+            if (confirm('Bạn có chắc chắn muốn xóa mục này?')) {
+                // Lọc bỏ entry khớp với cả ngày và cân nặng
+                weightHistory = weightHistory.filter(entry => !(entry.date === dateToRemove && entry.weight === weightToRemove));
+                saveWeightHistory();
+                renderWeightHistory();
+            }
+        }
+
+        // --- Tính năng Nhắc nhở uống nước thông minh ---
+        let dailyWaterGoal = parseFloat(localStorage.getItem('dailyWaterGoal')) || 0;
+        let waterConsumedToday = parseFloat(localStorage.getItem('waterConsumedToday')) || 0;
+        let lastWaterResetDate = localStorage.getItem('lastWaterResetDate') || '';
+        let reminderIntervalId = null; // Để lưu ID của setInterval
+        let reminderIntervalMinutes = parseInt(localStorage.getItem('reminderIntervalMinutes')) || 0;
+        let reminderEnabled = localStorage.getItem('reminderEnabled') === 'true';
+
+        function updateWaterDisplay() {
+            document.getElementById('waterGoal').textContent = dailyWaterGoal;
+            document.getElementById('waterConsumed').textContent = waterConsumedToday;
+
+            const progressBar = document.getElementById('waterProgressBar');
+            if (dailyWaterGoal > 0) {
+                let progress = (waterConsumedToday / dailyWaterGoal) * 100;
+                if (progress > 100) progress = 100; // Không vượt quá 100%
+                progressBar.style.width = `${progress}%`;
+            } else {
+                progressBar.style.width = '0%';
+            }
+        }
+
+        function saveWaterState() {
+            localStorage.setItem('dailyWaterGoal', dailyWaterGoal);
+            localStorage.setItem('waterConsumedToday', waterConsumedToday);
+            localStorage.setItem('lastWaterResetDate', lastWaterResetDate);
+            localStorage.setItem('reminderIntervalMinutes', reminderIntervalMinutes);
+            localStorage.setItem('reminderEnabled', reminderEnabled);
+        }
+
+        function loadWaterState() {
+            const today = new Date().toDateString();
+            // Reset nước đã uống nếu là ngày mới
+            if (lastWaterResetDate !== today) {
+                waterConsumedToday = 0;
+                lastWaterResetDate = today;
+                saveWaterState(); // Lưu trạng thái reset
+            }
+
+            updateWaterDisplay();
+            document.getElementById('dailyWaterGoal').value = dailyWaterGoal > 0 ? dailyWaterGoal : '';
+            document.getElementById('reminderInterval').value = reminderIntervalMinutes > 0 ? reminderIntervalMinutes : '';
+            updateReminderStatus();
+            if (reminderEnabled) {
+                startWaterReminder(false); // Bắt đầu lại nhắc nhở nếu đang bật, không hiển thị alert
+            }
+        }
+
+        function setWaterGoal() {
+            const inputGoal = parseFloat(document.getElementById('dailyWaterGoal').value);
+            if (isNaN(inputGoal) || inputGoal <= 0) {
+                alert('Vui lòng nhập mục tiêu nước hợp lệ.');
+                return;
+            }
+            dailyWaterGoal = inputGoal;
+            saveWaterState();
+            updateWaterDisplay();
+            alert('Mục tiêu nước đã được đặt!');
+        }
+
+        function addWater(amount) {
+            waterConsumedToday += amount;
+            saveWaterState();
+            updateWaterDisplay();
+            if (waterConsumedToday >= dailyWaterGoal && dailyWaterGoal > 0) {
+                alert('Chúc mừng! Bạn đã đạt được mục tiêu uống nước hôm nay!');
+            }
+        }
+
+        function resetWater() {
+            if (confirm('Bạn có chắc chắn muốn đặt lại lượng nước đã uống trong ngày?')) {
+                waterConsumedToday = 0;
+                const today = new Date().toDateString();
+                lastWaterResetDate = today; // Cập nhật ngày reset
+                saveWaterState();
+                updateWaterDisplay();
+                alert('Lượng nước đã uống đã được đặt lại.');
+            }
+        }
+
+        function sendWaterNotification() {
+            // Yêu cầu quyền thông báo nếu chưa được cấp
+            if (Notification.permission === 'granted') {
+                new Notification('Nhắc nhở uống nước!', {
+                    body: `Đã đến lúc uống nước rồi! Bạn đã uống ${waterConsumedToday}ml trên ${dailyWaterGoal}ml.`,
+                    icon: 'https://via.placeholder.com/48/007AFF/FFFFFF?text=💧' // Icon giọt nước
+                });
+            } else if (Notification.permission !== 'denied') {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        new Notification('Nhắc nhở uống nước!', {
+                            body: `Đã đến lúc uống nước rồi!`,
+                            icon: 'https://via.placeholder.com/48/007AFF/FFFFFF?text=💧'
+                        });
+                    }
+                });
+            }
+        }
+
+        function startWaterReminder(showAlert = true) {
+            stopWaterReminder(); // Dừng nhắc nhở cũ nếu có
+            const interval = parseInt(document.getElementById('reminderInterval').value);
+
+            if (isNaN(interval) || interval <= 0) {
+                alert('Vui lòng nhập khoảng thời gian nhắc nhở hợp lệ (phút).');
+                reminderEnabled = false;
+                saveWaterState();
+                updateReminderStatus();
+                return;
+            }
+            
+            reminderIntervalMinutes = interval;
+            reminderEnabled = true;
+            saveWaterState();
+
+            // Chuyển phút sang mili giây
+            reminderIntervalId = setInterval(sendWaterNotification, reminderIntervalMinutes * 60 * 1000);
+            updateReminderStatus();
+            if (showAlert) {
+                alert(`Nhắc nhở uống nước đã được bật, mỗi ${reminderIntervalMinutes} phút.`);
+            }
+        }
+
+        function stopWaterReminder() {
+            if (reminderIntervalId) {
+                clearInterval(reminderIntervalId);
+                reminderIntervalId = null;
+            }
+            reminderEnabled = false;
+            saveWaterState();
+            updateReminderStatus();
+        }
+
+        function toggleWaterReminder() {
+            if (reminderEnabled) {
+                stopWaterReminder();
+                alert('Nhắc nhở uống nước đã tắt.');
+            } else {
+                startWaterReminder();
+            }
+        }
+
+        function updateReminderStatus() {
+            const statusElement = document.getElementById('reminderStatus');
+            // Cần lấy giá trị của biến CSS --ios-blue và --text-dark
+            const iosBlue = getComputedStyle(document.documentElement).getPropertyValue('--ios-blue');
+            const textDark = getComputedStyle(document.documentElement).getPropertyValue('--text-dark');
+
+            if (reminderEnabled) {
+                statusElement.textContent = `Trạng thái: Đã bật (mỗi ${reminderIntervalMinutes} phút)`;
+                statusElement.style.color = iosBlue;
+            } else {
+                statusElement.textContent = 'Trạng thái: Đã tắt';
+                statusElement.style.color = textDark;
+            }
+        }
+
+        // --- Chức năng đóng/mở menu trên mobile ---
+        document.getElementById('menuIcon').addEventListener('click', function() {
+            const nav = document.getElementById('mainNav');
+            nav.classList.toggle('open');
+        });
+
+        // Đóng menu khi click vào một link (trên mobile)
+        document.querySelectorAll('#mainNav ul li a').forEach(item => {
+            item.addEventListener('click', () => {
+                const nav = document.getElementById('mainNav');
+                if (nav.classList.contains('open')) {
+                    nav.classList.remove('open');
+                }
+                // Xóa active class cũ và thêm vào link được click
+                document.querySelectorAll('#mainNav ul li a').forEach(link => link.classList.remove('active'));
+                item.classList.add('active');
+            });
+        });
+
+        // Xử lý cuộn mượt mà đến các section
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+
+        // Khởi tạo tất cả các tính năng khi tải trang
+        document.addEventListener('DOMContentLoaded', () => {
+            // Hiển thị thực đơn ngày hiện tại trong tuần theo ngày thực tế
+            const today = new Date();
+            // Lấy ngày trong tuần của ngày hôm nay (0: CN, 1: T2, ..., 6: T7)
+            // Chu kỳ của chúng ta là Ngày 1 -> Ngày 7, nên cần ánh xạ
+            // Ví dụ: Monday (1) -> dayIndex 0 (Ngày 1)
+            // Tuesday (2) -> dayIndex 1 (Ngày 2)
+            // ...
+            // Sunday (0) -> dayIndex 6 (Ngày 7)
+            const dayOfWeek = (today.getDay() === 0) ? 6 : (today.getDay() - 1); // Điều chỉnh để Chủ Nhật là Ngày 7 (index 6)
+            showDayMeal(dayOfWeek); 
+
+            renderWeightHistory();
+            loadWaterState(); 
+            renderMealHistory(); // Hiển thị lịch sử bữa ăn
+            
+            // Chạy dọn dẹp dữ liệu cũ (ví dụ: mỗi khi trang tải)
+            cleanOldMealData();
+        });
+    </script>
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/service-worker.js') // Đảm bảo đường dẫn đúng
+                .then(registration => {
+                    console.log('Service Worker registered:', registration);
+                })
+                .catch(error => {
+                    console.error('Service Worker registration failed:', error);
+                });
+        });
+    }
+</script>
+</body>
+</html>
